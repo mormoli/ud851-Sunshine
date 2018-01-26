@@ -138,6 +138,7 @@ public class WeatherProvider extends ContentProvider {
      *
      * @return The number of values that were inserted.
      */
+    @SuppressWarnings("ConstantConditions")
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -191,6 +192,7 @@ public class WeatherProvider extends ContentProvider {
      * @param sortOrder     How the rows in the cursor should be sorted.
      * @return A Cursor containing the results of the query. In our implementation,
      */
+    @SuppressWarnings("ConstantConditions")
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
@@ -302,13 +304,29 @@ public class WeatherProvider extends ContentProvider {
      * @param selectionArgs Used in conjunction with the selection statement
      * @return The number of rows deleted
      */
+    @SuppressWarnings("ConstantConditions")
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        throw new RuntimeException("Student, you need to implement the delete method!");
+        int numRowsDeleted;
+        if(selection == null) selection = "1";
 
+        switch (sUriMatcher.match(uri)) {
 //          TODO (2) Only implement the functionality, given the proper URI, to delete ALL rows in the weather table
+            case CODE_WEATHER:
+                numRowsDeleted = mOpenHelper.getWritableDatabase().delete(
+                        WeatherContract.WeatherEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
 
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if(numRowsDeleted != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
 //      TODO (3) Return the number of rows deleted
+        return numRowsDeleted;
     }
 
     /**
