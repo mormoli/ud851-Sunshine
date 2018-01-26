@@ -36,7 +36,7 @@ import android.support.annotation.NonNull;
 public class WeatherProvider extends ContentProvider {
 
 //  TODO (5) Create static constant integer values named CODE_WEATHER & CODE_WEATHER_WITH_DATE to identify the URIs this ContentProvider can handle
-    public static final int CODE_WEATRHER = 100;
+    public static final int CODE_WEATHER = 100;
     public static final int CODE_WEATHER_WITH_DATE = 101;
 //  TODO (7) Instantiate a static UriMatcher using the buildUriMatcher method
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -47,7 +47,7 @@ public class WeatherProvider extends ContentProvider {
         final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = WeatherContract.CONTENT_AUTHORITY;
 
-        uriMatcher.addURI(authority, WeatherContract.PATH_WEATHER, CODE_WEATRHER);
+        uriMatcher.addURI(authority, WeatherContract.PATH_WEATHER, CODE_WEATHER);
 
         uriMatcher.addURI(authority,WeatherContract.PATH_WEATHER + "/#", CODE_WEATHER_WITH_DATE);
 
@@ -103,7 +103,7 @@ public class WeatherProvider extends ContentProvider {
         Cursor cursor;
 //      TODO (9) Handle queries on both the weather and weather with date URI
         switch (sUriMatcher.match(uri)){
-            case CODE_WEATRHER:
+            case CODE_WEATHER:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         WeatherContract.WeatherEntry.TABLE_NAME,
                         projection,
