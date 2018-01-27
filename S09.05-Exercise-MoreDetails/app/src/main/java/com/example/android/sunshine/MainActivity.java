@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private ProgressBar mLoadingIndicator;
 
-
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
          * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
          * do things like set the adapter of the RecyclerView and toggle the visibility.
          */
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_forecast);
+        mRecyclerView = findViewById(R.id.recyclerview_forecast);
 
         /*
          * The ProgressBar that will indicate to the user that we are loading data. It will be
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements
          * Please note: This so called "ProgressBar" isn't a bar by default. It is more of a
          * circle. We didn't make the rules (or the names of Views), we just follow them.
          */
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
         /*
          * A LinearLayoutManager is responsible for measuring and positioning item views within a
@@ -161,8 +161,6 @@ public class MainActivity extends AppCompatActivity implements
      * Uses the URI scheme for showing a location found on a map in conjunction with
      * an implicit Intent. This super-handy Intent is detailed in the "Common Intents" page of
      * Android's developer site:
-     *
-     * @see "http://developer.android.com/guide/components/intents-common.html#Maps"
      * <p>
      * Protip: Hold Command on Mac or Control on Windows and click that link to automagically
      * open the Common Intents page
@@ -262,16 +260,15 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * This method is for responding to clicks from our list.
      *
-     * @param weatherForDay String describing weather details for a particular day
+     * @param date long type variable
      */
     @Override
-    public void onClick(String weatherForDay) {
+    public void onClick(long date) {
+        Intent weatherIntent = new Intent(MainActivity.this, DetailActivity.class);
 //      TODO (39) Refactor onClick to build a URI for the clicked date and and pass it with the Intent using setData
-        Context context = this;
-        Class destinationClass = DetailActivity.class;
-        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, weatherForDay);
-        startActivity(intentToStartDetailActivity);
+        Uri uriDateClick = WeatherContract.WeatherEntry.buildWeatherUriWithDate(date);
+        weatherIntent.setData(uriDateClick);
+        startActivity(weatherIntent);
     }
 
     /**
